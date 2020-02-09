@@ -24,39 +24,38 @@ $(deriveJSON defaultOptions ''Movie)
 
 --newtype MovieIds = MovieIds { ids :: [Int] }
 
-data MovieId = MovieId { id :: String }
+--newtype MovieId = MovieId { id :: String }
 
-
-type API = "movies" :> Get '[JSON] [Movie]
+type API1 = "movies" :> Get '[JSON] [Movie]
 
 type API2 = "movies2" :> Get '[JSON] [Movie]
-  :<|> "moviestest" :> QueryParam "id" String :> Get '[JSON] MovieId
+  :<|> "moviestest" :> QueryParam "id" String :> Get '[JSON] [Movie]
 
 startApp :: IO ()
 startApp = run 8080 app
 
 app :: Application
-app = serve api server
+app = serve api server1
 
-api :: Proxy API
+api :: Proxy API1
 api = Proxy
 
-server :: Server API
-server = return movies
+server1 :: Server API1
+server1 = return movies1
 
 server2 :: Server API2
 server2 = movies2
     :<|> moviestest
 
-    where movies2 = return movies
+    where movies2 = return movies1
 
-          moviestest :: Maybe String -> Handler MovieId
-          moviestest id = return . MovieId $ case id of
-            Nothing -> "Hello no id given coward"
-            Just n -> "nice id you got there : "
+          moviestest :: Maybe String -> Handler [Movie]
+          moviestest id = return . [Movie] $ case id of
+            Nothing -> movies1
+            Just n -> movies1
 
-movies :: [Movie]
-movies = [ Movie 1 "title1" "genres1" ["tag11", "tag12"]
+movies1 :: [Movie]
+movies1 = [ Movie 1 "title1" "genres1" ["tag11", "tag12"]
          , Movie 2 "title2" "genres2" ["tag21", "tag22"]
          ]
 
