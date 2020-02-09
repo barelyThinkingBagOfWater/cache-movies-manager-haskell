@@ -1,1 +1,1 @@
-stack exec -- yesod devel
+stack exec cache-movies-manager-exe
