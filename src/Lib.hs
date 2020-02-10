@@ -13,6 +13,7 @@ import Data.Aeson.TH
 import Network.Wai
 import Network.Wai.Handler.Warp
 import Servant
+import Importer
 
 data Movie = Movie
   { movieId :: Int
@@ -28,6 +29,8 @@ movies1 = [ Movie 1 "title1" "genres1" ["tag11", "tag12"]
          , Movie 2 "title2" "genres2" ["tag21", "tag22"]
          ]
 
+
+-- https://haskell-servant.readthedocs.io/en/v0.16/tutorial/Server.html
 
 -- Test
 type TestMovieAPI = "test" :> Get '[JSON] [Movie]
