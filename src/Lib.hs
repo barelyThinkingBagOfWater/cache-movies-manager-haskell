@@ -1,7 +1,7 @@
 {-# LANGUAGE DataKinds       #-} -- for [Json] and the String like the url
 {-# LANGUAGE TemplateHaskell #-} -- for the deriveJson method
 {-# LANGUAGE TypeOperators   #-} -- for the :>
---{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module Lib
     ( startApp
@@ -13,16 +13,8 @@ import Data.Aeson.TH
 import Network.Wai
 import Network.Wai.Handler.Warp
 import Servant
-import Importer
+import MoviesImporter
 
-data Movie = Movie
-  { movieId :: Int
-  , title :: String
-  , genres :: String
-  , tags :: [String]
-  }
-
-$(deriveJSON defaultOptions ''Movie)
 
 movies1 :: [Movie]
 movies1 = [ Movie 1 "title1" "genres1" ["tag11", "tag12"]
