@@ -8,7 +8,7 @@ module MoviesImporter where
 
 import Control.Applicative
 import Control.Monad
-import Control.Monad.IO.Class
+--import Control.Monad.IO.Class
 import Data.Aeson
 import Data.Aeson.TH
 import Data.Monoid
@@ -39,6 +39,7 @@ type MoviesManagerAPI = "movies-manager" :> "movies" :> Get '[JSON] [Movie]
 proxyAPI :: Proxy MoviesManagerAPI
 proxyAPI = Proxy
 
---importMovies :: EitherT ServantError IO  [Movie]
+importMovies :: IO [Movie]
+importMovies = client proxyAPI (BaseUrl Http "172.18.42.4" 80)
 
 -- https://www.servant.dev/client-in-5-minutes.html
