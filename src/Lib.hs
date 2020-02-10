@@ -1,6 +1,6 @@
-{-# LANGUAGE DataKinds       #-}
-{-# LANGUAGE TemplateHaskell #-}
-{-# LANGUAGE TypeOperators   #-}
+{-# LANGUAGE DataKinds       #-} -- for [Json] and the String like the url
+{-# LANGUAGE TemplateHaskell #-} -- for the deriveJson method
+{-# LANGUAGE TypeOperators   #-} -- for the :>
 
 module Lib
     ( startApp
@@ -22,37 +22,38 @@ data Movie = Movie
 
 $(deriveJSON defaultOptions ''Movie)
 
---newtype MovieIds = MovieIds { ids :: [Int] }
-
---newtype MovieId = MovieId { id :: String }
-
-type API1 = "movies" :> Get '[JSON] [Movie]
-
-type API2 = "movies2" :> Get '[JSON] [Movie]
-  :<|> "moviestest" :> QueryParam "id" String :> Get '[JSON] [Movie]
 
 startApp :: IO ()
 startApp = run 8080 app
 
+
+-- Test
+type TestMovieAPI = "test" :> Get '[JSON] [Movie]
+
+testApi :: Proxy TestMovieAPI
+testApi = Proxy
+
+testServer :: Server TestMovieAPI
+testServer = return movies1
+
 app :: Application
-app = serve api server1
+app = serve testApi testServer
 
-api :: Proxy API1
-api = Proxy
+-- Single Movie fetching endpoint
+type SingleMovieAPI = "movie" :> Capture "id" String :> Get '[JSON] Movie
 
-server1 :: Server API1
-server1 = return movies1
+singleMovieAPI :: Proxy SingleMovieAPI
+singleMovieAPI = Proxy
 
-server2 :: Server API2
-server2 = movies2
-    :<|> moviestest
+--singleMovieServer :: Server SingleMovieAPI
+--singleMovieServer = return singleMovie
 
-    where movies2 = return movies1
+-- Multiple Movies fetching endpoint
+type MultipleMoviesAPI = "movies" :> QueryParams "id" [String] :> Get '[JSON] [Movie] --or return a Stream
 
-          moviestest :: Maybe String -> Handler [Movie]
-          moviestest id = return . [Movie] $ case id of
-            Nothing -> movies1
-            Just n -> movies1
+
+singleMovie :: Movie
+singleMovie = Movie 1 "title1" "genres1" ["tag11", "tag12"]
 
 movies1 :: [Movie]
 movies1 = [ Movie 1 "title1" "genres1" ["tag11", "tag12"]
