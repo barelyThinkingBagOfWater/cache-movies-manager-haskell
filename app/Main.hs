@@ -4,5 +4,5 @@ import Lib
 import MoviesImporter
 
 main :: IO ()
---main = run2
-main = startApp
+--main = startApp
+main = importMovies

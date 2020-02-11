@@ -5,7 +5,6 @@
 
 module Lib
     ( startApp
-    , app
     ) where
 
 import Data.Aeson
@@ -17,13 +16,8 @@ import MoviesImporter
 import Model
 
 
-
-
-
--- https://haskell-servant.readthedocs.io/en/v0.16/tutorial/Server.html
-
 -- Test
-type TestMovieAPI = "test" :> Get '[JSON] [Movie]
+type TestMovieAPI = "import" :> Get '[JSON] [Movie]
 
 testApi :: Proxy TestMovieAPI
 testApi = Proxy
