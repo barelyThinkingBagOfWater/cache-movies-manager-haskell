@@ -3,7 +3,7 @@
 {-# LANGUAGE TypeOperators   #-} -- for the :>
 {-# LANGUAGE OverloadedStrings #-}
 
-module Lib
+module Endpoints
     ( startApp
     ) where
 
@@ -16,27 +16,19 @@ import MoviesImporter
 import Model
 
 
--- Test
-type TestMovieAPI = "import" :> Get '[JSON] [Movie]
 
-testApi :: Proxy TestMovieAPI
-testApi = Proxy
-
-testServer :: Server TestMovieAPI
-testServer = return movies1
-
---app :: Application
---app = serve testApi testServer
+-- Now learn about monad to run your IO in your endpoint
 
 
 -- Position
-type API = "test" :> Get '[JSON] [Movie]
+type API = "import" :> Get '[JSON] [Movie]
          :<|> "position" :> Capture "x" Int :> Capture "y" Int :> Get '[JSON] Position
 
 data Position = Position
   { xCoord :: Int
   , yCoord :: Int
   }
+
 $(deriveJSON defaultOptions ''Position)
 
 server3 :: Server API
@@ -44,6 +36,7 @@ server3 = return movies1
      :<|> position
   where position :: Int -> Int -> Handler Position
         position x y = return (Position x y)
+
 
 proxy :: Proxy API
 proxy = Proxy

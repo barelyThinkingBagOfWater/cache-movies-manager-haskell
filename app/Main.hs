@@ -1,8 +1,8 @@
 module Main where
 
-import Lib
+import Endpoints
 import MoviesImporter
 
 main :: IO ()
---main = startApp
-main = importMovies
+main = startApp
+--main = testImport
