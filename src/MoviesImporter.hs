@@ -4,7 +4,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE DeriveGeneric #-}
 
-module MoviesImporter where
+module MoviesImporter (run2) where
 
 import Control.Applicative
 import Control.Monad
@@ -15,8 +15,10 @@ import Data.Monoid
 import Data.Proxy
 import Data.Text (Text)
 import GHC.Generics
+import Network.HTTP.Client (newManager, defaultManagerSettings)
 import Servant.Client
 import Servant
+import Model
 
 import qualified Data.Text    as T
 import qualified Data.Text.IO as T
@@ -24,22 +26,24 @@ import qualified Data.Text.IO as T
 import qualified Servant.Client.Streaming as S
 
 
-data Movie = Movie
-  { movieId :: Int
-  , title :: String
-  , genres :: String
-  , tags :: [String]
-  } deriving (Eq, Show)
-
-$(deriveJSON defaultOptions 'Movie)
-
-
 type MoviesManagerAPI = "movies-manager" :> "movies" :> Get '[JSON] [Movie]
 
-proxyAPI :: Proxy MoviesManagerAPI
-proxyAPI = Proxy
+moviesManagerAPI :: Proxy MoviesManagerAPI
+moviesManagerAPI = Proxy
 
-importMovies :: IO [Movie]
-importMovies = client proxyAPI (BaseUrl Http "172.18.42.4" 80)
+importMovies :: ClientM [Movie]
+importMovies = client moviesManagerAPI
+
+-- (BaseUrl Http "172.18.42.4" 80)
 
 -- https://www.servant.dev/client-in-5-minutes.html
+
+run2 :: IO ()
+run2 = do
+  manager' <- newManager defaultManagerSettings
+  res <- runClientM importMovies (mkClientEnv manager' (BaseUrl Http "172.18.42.4" 80 ""))
+  case res of
+    Left err -> putStrLn $ "Error: " ++ show err
+    Right (movies) -> do
+      print movies
+

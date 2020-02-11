@@ -1,6 +1,7 @@
 module Main where
 
-import Lib
+--import Lib
+import MoviesImporter
 
 main :: IO ()
-main = startApp
+main = run2
