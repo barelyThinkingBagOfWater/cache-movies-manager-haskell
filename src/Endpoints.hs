@@ -6,24 +6,34 @@ module Endpoints
     ( startEndpoints
     ) where
 
+-- affine tes imports?
 import Data.Aeson
 import Network.Wai
 import Network.Wai.Handler.Warp
+import Control.Monad.IO.Class (liftIO)
 import Servant
+
 import MoviesImporter
 import Model
-import Control.Monad.IO.Class
+import RedisConnector
 
 
 type MoviesAPI = "import" :> Get '[JSON] [Movie]
+--type MoviesAPI = "import" :> ()
 
 proxy :: Proxy MoviesAPI
 proxy = Proxy
 
 
+--server :: Server MoviesAPI
+--server = do
+--  movies <- liftIO $ importMovies
+--  return movies
+
 server :: Server MoviesAPI
 server = do
   movies <- liftIO $ importMovies
+--  liftIO $ saveMovies movies
   return movies
 
 
