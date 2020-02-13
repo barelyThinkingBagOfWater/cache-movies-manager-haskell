@@ -12,7 +12,7 @@ data Movie = Movie
   , title :: String
   , genres :: String
   , tags :: [String]
-  } deriving (Eq, Show)
+  } deriving (Eq, Show) -- show for "print randomMovie"
 
 $(deriveJSON defaultOptions 'Movie)
 

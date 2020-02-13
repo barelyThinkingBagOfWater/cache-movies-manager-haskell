@@ -4,5 +4,5 @@ import Endpoints
 import MoviesImporter
 
 main :: IO ()
-main = startApp
+main = startEndpoints
 --main = testImport

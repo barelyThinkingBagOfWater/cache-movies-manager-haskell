@@ -4,7 +4,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Endpoints
-    ( startApp
+    ( startEndpoints
     ) where
 
 import Data.Aeson
@@ -14,35 +14,25 @@ import Network.Wai.Handler.Warp
 import Servant
 import MoviesImporter
 import Model
+import Control.Monad.IO.Class
 
 
+type MoviesAPI = "import" :> Get '[JSON] [Movie]
 
--- Now learn about monad to run your IO in your endpoint
-
-
--- Position
-type API = "import" :> Get '[JSON] [Movie]
-         :<|> "position" :> Capture "x" Int :> Capture "y" Int :> Get '[JSON] Position
-
-data Position = Position
-  { xCoord :: Int
-  , yCoord :: Int
-  }
-
-$(deriveJSON defaultOptions ''Position)
-
-server3 :: Server API
-server3 = return movies1
-     :<|> position
-  where position :: Int -> Int -> Handler Position
-        position x y = return (Position x y)
-
-
-proxy :: Proxy API
+proxy :: Proxy MoviesAPI
 proxy = Proxy
 
+
+server :: Server MoviesAPI
+--server = return movies1
+server = do
+  movies <- liftIO $ importMovies
+  return movies
+
+
+
 app :: Application
-app = serve proxy server3
+app = serve proxy server
 
 
 
@@ -53,21 +43,12 @@ singleMovieApi :: Proxy SingleMovieAPI
 singleMovieApi = Proxy
 
 
---singleMovieServer :: Server SingleMovieAPI
---singleMovieServer = return singleMovie
---  where singleMovie :: String -> Movie
---        singleMovie id = return (Movie 1 "title5" "genres1" ["tag11", "tag12"])
-
-
---app :: Application
---app = serve singleMovieApi singleMovieServer
-
 -- Multiple Movies fetching endpoint
 type MultipleMoviesAPI = "movies" :> QueryParams "id" [String] :> Get '[JSON] [Movie] --or return a Stream
 
 
-startApp :: IO ()
-startApp = run 8080 app
+startEndpoints :: IO ()
+startEndpoints = run 8080 app
 
 
 --                 .route(GET(URL_PREFIX + "/movie/{movieId}"), handler::getMovie)
