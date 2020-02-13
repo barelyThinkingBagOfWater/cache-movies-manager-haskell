@@ -1,8 +1,7 @@
 {-# LANGUAGE DataKinds       #-} -- for [Json] and the String like the url
-{-# LANGUAGE TemplateHaskell #-} -- for the deriveJson method
 {-# LANGUAGE TypeOperators   #-} -- for the :>
 
-module MoviesImporter (testImport, importMovies) where
+module MoviesImporter (importMovies) where
 
 import Data.Aeson
 import Data.Proxy
@@ -23,21 +22,13 @@ importMoviesClient :: ClientM [Movie]
 importMoviesClient = client moviesManagerAPI
 
 
-testImport :: IO ()
-testImport = do
-  manager' <- newManager defaultManagerSettings
-  res <- runClientM importMoviesClient (mkClientEnv manager' (BaseUrl Http "172.18.42.4" 80 ""))
-  case res of
-    Left err -> putStrLn $ "Error: " ++ show err
-    Right (movies) -> do
-      print movies
-
-
 importMovies :: IO [Movie]
 importMovies = do
   manager' <- newManager defaultManagerSettings
   res <- runClientM importMoviesClient (mkClientEnv manager' (BaseUrl Http "172.18.42.4" 80 ""))
   case res of
+    Left err -> do
+      putStrLn $ "Error: " ++ show err
+      return []
     Right (movies) -> do -- better handling including errors please
       return movies
-

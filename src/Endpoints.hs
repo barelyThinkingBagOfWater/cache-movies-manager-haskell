@@ -1,14 +1,12 @@
 {-# LANGUAGE DataKinds       #-} -- for [Json] and the String like the url
 {-# LANGUAGE TemplateHaskell #-} -- for the deriveJson method
 {-# LANGUAGE TypeOperators   #-} -- for the :>
-{-# LANGUAGE OverloadedStrings #-}
 
 module Endpoints
     ( startEndpoints
     ) where
 
 import Data.Aeson
-import Data.Aeson.TH
 import Network.Wai
 import Network.Wai.Handler.Warp
 import Servant
@@ -24,16 +22,13 @@ proxy = Proxy
 
 
 server :: Server MoviesAPI
---server = return movies1
 server = do
   movies <- liftIO $ importMovies
   return movies
 
 
-
 app :: Application
 app = serve proxy server
-
 
 
 -- Single Movie fetching endpoint

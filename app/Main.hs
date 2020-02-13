@@ -5,4 +5,3 @@ import MoviesImporter
 
 main :: IO ()
 main = startEndpoints
---main = testImport
