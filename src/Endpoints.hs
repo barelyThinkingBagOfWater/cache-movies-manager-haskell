@@ -25,13 +25,10 @@ type MoviesAPI = "import" :> Get '[PlainText] String
 proxy :: Proxy MoviesAPI
 proxy = Proxy
 
-
-
 server :: Server MoviesAPI
 server = do
   movies <- liftIO $ importMovies
---  liftIO $ saveMovies movies
-  liftIO $ printMovieIds movies
+  liftIO $ saveMovies movies
   return "Import in progress"
 
 

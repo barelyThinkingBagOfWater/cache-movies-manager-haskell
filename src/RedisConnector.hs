@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-} -- for the command sent to the server, required?
 
-module RedisConnector (saveMovies, printMovieIds) where
+module RedisConnector (saveMovies) where
 
 import Control.Monad.IO.Class (liftIO)
 import Data.Aeson (encode, toJSON)
@@ -15,26 +15,15 @@ import Model
 
 saveMovie :: Movie -> IO (Either Reply Status)
 saveMovie movie = do
-  conn   <- liftIO $ connect defaultConnectInfo
-  runRedis conn $ set (C.pack "json_response") $ (toStrict $ encode movie)
---   line above is fine? Try to get a saved movie still
---  runRedis conn $ set (movieId movie) (toStrict $ encode movie)
+  conn <- liftIO $ connect defaultConnectInfo
+  runRedis conn $ set (C.pack (show (getMovieId movie))) $ (toStrict $ encode movie) --show for Int -> String, C.pack for String -> C.ByteString
 
 saveMovies :: [Movie] -> IO ()
 saveMovies movies = do
   mapM_ (saveMovie) movies
 
--- help? https://stackoverflow.com/questions/15993496/yesod-how-to-send-redis-results-as-json
-
--- to update the entities : https://stackoverflow.com/questions/35610524/building-a-monad-on-top-of-hedis-a-haskell-redis-lib
-
-
-printMovieId :: Movie -> IO ()
-printMovieId movie = do
-  print movie
---  putStrLn (title movie)
-
-
-printMovieIds :: [Movie] -> IO ()
-printMovieIds movies = do
-  mapM_ (printMovieId) movies
+--getMovie :: Int -> Movie
+--getMovie movieId = do
+--  conn   <- liftIO $ connect defaultConnectInfo
+--  movie <- runRedis conn $ get (show(movieId)) -- convert C.ByteString -> Movie
+--  return movie
