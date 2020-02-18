@@ -3,7 +3,8 @@
 {-# LANGUAGE TypeOperators   #-} -- for the :>
 
 module Endpoints
-    ( startEndpoints
+    ( startEndpoints,
+    test1
     ) where
 
 -- affine tes imports?
@@ -17,9 +18,10 @@ import MoviesImporter
 import Model
 import RedisConnector
 
+import Database.Redis
 
-type MoviesAPI = "import" :> Get '[JSON] [Movie]
---type MoviesAPI = "import" :> ()
+--type MoviesAPI = "import" :> Get '[JSON] [Movie]
+type MoviesAPI = "import" :> Get '[PlainText] String
 
 proxy :: Proxy MoviesAPI
 proxy = Proxy
@@ -33,8 +35,8 @@ proxy = Proxy
 server :: Server MoviesAPI
 server = do
   movies <- liftIO $ importMovies
---  liftIO $ saveMovies movies
-  return movies
+--  answers <- liftIO $ saveMovies movies
+  return "Import in progress"
 
 
 app :: Application
@@ -50,6 +52,11 @@ singleMovieApi = Proxy
 
 -- Multiple Movies fetching endpoint
 type MultipleMoviesAPI = "movies" :> QueryParams "id" [String] :> Get '[JSON] [Movie] --or return a Stream
+
+
+test1 :: IO ()
+test1 = do
+  saveMovies movies1
 
 
 startEndpoints :: IO ()

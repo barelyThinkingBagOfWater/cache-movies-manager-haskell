@@ -13,15 +13,28 @@ import Database.Redis
 import Model
 
 
-saveMovie :: Movie -> IO (Either Reply Status)
+saveMovie :: Movie -> IO ()
 saveMovie movie = do
   conn   <- liftIO $ connect defaultConnectInfo
-  runRedis conn $ set (C.pack "json_response") $ (toStrict $ encode movie)
+  answer <- runRedis conn $ set (C.pack "json_response") $ (toStrict $ encode movie)
+  print answer
 --  runRedis conn $ set movie.movieId movie.toJSON
 
-saveMovies :: [Movie] -> [IO (Either Reply Status)]
+saveMovies :: [Movie] -> IO ()
 saveMovies movies = do
-  map (saveMovie) movies
+  mapM_ (saveMovie) movies
+
+-- help? https://stackoverflow.com/questions/15993496/yesod-how-to-send-redis-results-as-json
+
+-- to update the entities : https://stackoverflow.com/questions/35610524/building-a-monad-on-top-of-hedis-a-haskell-redis-lib
 
 
-
+testDb :: IO()
+testDb = do
+  conn   <- liftIO $ connect defaultConnectInfo
+  runRedis conn $ do
+    set "hello" "hello"
+    set "world" "world"
+    hello <- get "hello"
+    world <- get "world"
+    liftIO $ print (hello,world)
