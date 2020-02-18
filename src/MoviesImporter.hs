@@ -25,8 +25,8 @@ importMoviesClient = client moviesManagerAPI
 importMovies :: IO [Movie] --Try using a maybe so you can return Nothing in case of error
 importMovies = do
   manager' <- newManager defaultManagerSettings
-  res <- runClientM importMoviesClient (mkClientEnv manager' (BaseUrl Http "172.18.42.5" 80 ""))
-  case res of
+  answer <- runClientM importMoviesClient (mkClientEnv manager' (BaseUrl Http "172.18.42.5" 80 ""))
+  case answer of
     Left err -> do
       putStrLn $ "Error: " ++ show err
       return []

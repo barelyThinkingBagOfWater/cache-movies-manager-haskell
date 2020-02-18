@@ -3,8 +3,7 @@
 {-# LANGUAGE TypeOperators   #-} -- for the :>
 
 module Endpoints
-    ( startEndpoints,
-    test1
+    ( startEndpoints
     ) where
 
 -- affine tes imports?
@@ -31,7 +30,8 @@ proxy = Proxy
 server :: Server MoviesAPI
 server = do
   movies <- liftIO $ importMovies
-  liftIO $ saveMovies movies
+--  liftIO $ saveMovies movies
+  liftIO $ printMovieIds movies
   return "Import in progress"
 
 
@@ -48,11 +48,6 @@ singleMovieApi = Proxy
 
 -- Multiple Movies fetching endpoint
 type MultipleMoviesAPI = "movies" :> QueryParams "id" [String] :> Get '[JSON] [Movie] --or return a Stream
-
-
-test1 :: IO ()
-test1 = do
-  saveMovies movies1
 
 
 startEndpoints :: IO ()

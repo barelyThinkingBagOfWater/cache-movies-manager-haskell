@@ -1,12 +1,12 @@
 {-# LANGUAGE TemplateHaskell #-} -- for the deriveJson method
 
-module Model (Movie, movies1) where
+module Model (Movie) where
 
 import Data.Aeson.TH
 
 
 data Movie = Movie
-  { movieId :: Int
+  { movieId :: String
   , title :: String
   , genres :: String
   , tags :: [String]
