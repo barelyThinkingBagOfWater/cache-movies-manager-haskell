@@ -27,15 +27,11 @@ proxy :: Proxy MoviesAPI
 proxy = Proxy
 
 
---server :: Server MoviesAPI
---server = do
---  movies <- liftIO $ importMovies
---  return movies
 
 server :: Server MoviesAPI
 server = do
   movies <- liftIO $ importMovies
---  answers <- liftIO $ saveMovies movies
+  liftIO $ saveMovies movies
   return "Import in progress"
 
 

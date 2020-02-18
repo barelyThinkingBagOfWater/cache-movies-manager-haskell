@@ -17,8 +17,8 @@ saveMovie :: Movie -> IO ()
 saveMovie movie = do
   conn   <- liftIO $ connect defaultConnectInfo
   answer <- runRedis conn $ set (C.pack "json_response") $ (toStrict $ encode movie)
+  -- line above is fine? Try to get a saved movie still
   print answer
---  runRedis conn $ set movie.movieId movie.toJSON
 
 saveMovies :: [Movie] -> IO ()
 saveMovies movies = do
@@ -27,14 +27,3 @@ saveMovies movies = do
 -- help? https://stackoverflow.com/questions/15993496/yesod-how-to-send-redis-results-as-json
 
 -- to update the entities : https://stackoverflow.com/questions/35610524/building-a-monad-on-top-of-hedis-a-haskell-redis-lib
-
-
-testDb :: IO()
-testDb = do
-  conn   <- liftIO $ connect defaultConnectInfo
-  runRedis conn $ do
-    set "hello" "hello"
-    set "world" "world"
-    hello <- get "hello"
-    world <- get "world"
-    liftIO $ print (hello,world)
