@@ -1,9 +1,9 @@
 {-# LANGUAGE OverloadedStrings #-} -- for the command sent to the server, required?
 
-module RedisConnector (saveMovies) where
+module RedisConnector (saveMovies, getMovie) where
 
 import Control.Monad.IO.Class (liftIO)
-import Data.Aeson (encode, toJSON)
+import Data.Aeson (encode, decode, toJSON)
 
 import qualified Data.Text                  as  T
 import qualified Data.ByteString.Char8      as  C
@@ -22,8 +22,8 @@ saveMovies :: [Movie] -> IO ()
 saveMovies movies = do
   mapM_ (saveMovie) movies
 
---getMovie :: Int -> Movie
---getMovie movieId = do
---  conn   <- liftIO $ connect defaultConnectInfo
---  movie <- runRedis conn $ get (show(movieId)) -- convert C.ByteString -> Movie
---  return movie
+getMovie :: Int -> IO (Either Reply (Maybe C.ByteString)) -- NOT TESTED
+getMovie movieId = do
+  conn <- liftIO $ connect defaultConnectInfo
+  encodedMovie <- runRedis conn $ get (C.pack (show (movieId))) -- now convert C.ByteString -> Movie
+  return encodedMovie
