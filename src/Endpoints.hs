@@ -6,7 +6,7 @@ module Endpoints
     ( startEndpoints
     ) where
 
--- affine tes imports?
+-- affine et clean tes imports?
 import Data.Aeson
 import Network.Wai
 import Network.Wai.Handler.Warp
@@ -49,6 +49,8 @@ type MultipleMoviesAPI = "movies" :> QueryParams "id" [String] :> Get '[JSON] [M
 
 startEndpoints :: IO ()
 startEndpoints = run 8080 app
+
+-- for metrics : https://hackage.haskell.org/package/prometheus-metrics-ghc
 
 
 --                 .route(GET(URL_PREFIX + "/movie/{movieId}"), handler::getMovie)

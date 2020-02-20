@@ -28,7 +28,6 @@ library
                      , text
                      , http-client
                      , hedis
-                     , monad-logger
                      , bytestring
   default-language:    Haskell2010
 

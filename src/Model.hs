@@ -14,6 +14,6 @@ data Movie = Movie
 
 $(deriveJSON defaultOptions 'Movie)
 
-getMovieId :: Movie -> Int
+getMovieId :: Movie -> Int -- should be created by default? Why 'movieId movie' doesn't work elsewhere?
 getMovieId movie = movieId movie
 
