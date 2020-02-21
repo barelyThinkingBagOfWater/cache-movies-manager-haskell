@@ -25,7 +25,7 @@ importMovies = do
   answer <- runClientM importMoviesClient (mkClientEnv manager' (BaseUrl Http "172.18.42.5" 80 ""))
   case answer of
     Left err -> do
-      putStrLn $ "Error: " ++ show err
+      putStrLn $ "Error when importing the movies: " ++ show err
       return []
     Right (movies) -> do -- better handling including errors please
       return movies

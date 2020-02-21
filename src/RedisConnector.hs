@@ -1,4 +1,4 @@
-module RedisConnector (saveMovies, getMovie) where
+module RedisConnector (saveMovies, getMovie, getMovies) where
 
 import Control.Monad.IO.Class (liftIO)
 import Data.Aeson (encode, decode)
@@ -12,13 +12,13 @@ import Model
 -- for config, read env variables, https://hackage.haskell.org/package/envy
 saveMovie :: Movie -> IO (Either Reply Status)
 saveMovie movie = do
-  conn <- liftIO $ connect defaultConnectInfo --you could try to add more max concurrent connections, check object ConnectInfo
+  conn <- liftIO $ connect defaultConnectInfo -- you could try to add more max concurrent connections, check object ConnectInfo
   runRedis conn $ set (C.pack (show (getMovieId movie))) $ (toStrict $ encode movie) --show for Int -> String, C.pack for String -> C.ByteString
 
 
 saveMovies :: [Movie] -> IO ()
 saveMovies movies = do
-  mapM_ (saveMovie) movies
+  mapM_ saveMovie movies -- underscore to specify you don't care about the results
 
 
 getMovie :: Int -> IO Movie
@@ -41,6 +41,11 @@ getMovie movieId = do
               return emptyMovie
             Just movie -> do
               return movie
+
+getMovies :: [Int] -> IO [Movie]
+getMovies movieIds = do
+  mapM getMovie movieIds
+
 
 -- connection lost est pas du à la limite des 100k avec redis? If you consume a stream one by one
 -- that should go better with Redis as well

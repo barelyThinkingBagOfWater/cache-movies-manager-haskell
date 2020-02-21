@@ -19,8 +19,9 @@ import MoviesImporter
 import Model
 import RedisConnector
 
-type MoviesAPI = "import" :> Get '[PlainText] String
+type MoviesAPI = "cache" :> "refresh" :> Get '[PlainText] String --should be Put?
                :<|> "movie" :> Capture "movieId" Int :> Get '[JSON] Movie
+               :<|> "movies" :> QueryParams "id" Int :> Get '[JSON] [Movie]
 
 importProxy :: Proxy MoviesAPI
 importProxy = Proxy
@@ -28,6 +29,8 @@ importProxy = Proxy
 importServer :: Server MoviesAPI
 importServer = importServer
            :<|> singleMovieServer
+           :<|> multipleMoviesServer
+
   where  importServer = do
                           movies <- liftIO $ importMovies
                           liftIO $ saveMovies movies
@@ -39,20 +42,19 @@ importServer = importServer
                             then throwError $ err404 { errBody = "No movie found with this id in the cache" }
                             else return movie
 
+         multipleMoviesServer movieIds = do
+                          movies <- liftIO $ getMovies movieIds
+                          return movies
+
+
 
 
 app :: Application
 app = serve importProxy importServer
 
-
-
-
--- Multiple Movies fetching endpoint
-type MultipleMoviesAPI = "movies" :> QueryParams "id" [String] :> Get '[JSON] [Movie] --or return a Stream
-
-
 startEndpoints :: IO ()
 startEndpoints = run 8080 app
+
 
 -- for metrics : https://hackage.haskell.org/package/prometheus-metrics-ghc
 
