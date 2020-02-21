@@ -5,11 +5,13 @@ module RedisConnector (saveMovies, getMovie) where
 import Control.Monad.IO.Class (liftIO)
 import Data.Aeson (encode, decode)
 
-import qualified Data.Text                  as  T
+import qualified Data.Text                  as  T --remove me?
 import qualified Data.ByteString.Char8      as  C
-import           Data.ByteString.Lazy       (toStrict)
+import           Data.ByteString.Lazy       (toStrict, fromStrict)
 
-import Database.Redis
+import Data.Typeable
+
+import Database.Redis (runRedis, connect, defaultConnectInfo, set, get, Status, Reply)
 import Model
 
 -- for config, read env variables, https://hackage.haskell.org/package/envy
@@ -22,11 +24,24 @@ saveMovies :: [Movie] -> IO ()
 saveMovies movies = do
   mapM_ (saveMovie) movies
 
-getMovie :: Int -> IO (Either Reply (Maybe C.ByteString))
+--getMovie :: Int -> IO (Either Reply (Maybe C.ByteString))
+getMovie :: Int -> IO Movie
 getMovie movieId = do
   conn <- liftIO $ connect defaultConnectInfo
-  encodedMovie <- runRedis conn $ get (C.pack (show (movieId))) -- now convert C.ByteString -> Movie
-  return encodedMovie
+  answer <- runRedis conn $ get (C.pack (show (movieId))) -- now convert C.ByteString -> Movie
+  case answer of
+    Left reply -> do
+      putStrLn $ "Error: " ++ show reply
+      return emptyMovie
+    Right maybe -> do
+      case maybe of
+        Nothing -> do
+          print $ "movie id:" ++ (show movieId) ++ " not found"
+          return emptyMovie
+        Just encodedMovie -> do
+          print $ (decode $ fromStrict encodedMovie :: Maybe Movie)
+          return emptyMovie
+
 
 -- connection lost est pas du à la limite des 100k avec redis? If you consume a stream one by one
 -- that should go better with Redis as well
@@ -36,3 +51,4 @@ getMovie movieId = do
    --  In case of a lost connection, command functions throw a ConnectionLostException.
    --  It can only be caught outside of runRedis.
    --  Hardcore : https://www.schoolofhaskell.com/user/snoyberg/general-haskell/exceptions/catching-all-exceptions
+

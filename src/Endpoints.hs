@@ -41,8 +41,6 @@ importServer = importServer
                           return "lol\n"
 
 
-
-
 app :: Application
 app = serve importProxy importServer
 

@@ -1,6 +1,6 @@
 {-# LANGUAGE TemplateHaskell #-} -- for the deriveJson method
 
-module Model (Movie, getMovieId) where
+module Model (Movie, getMovieId, emptyMovie) where
 
 import Data.Aeson.TH
 
@@ -16,3 +16,6 @@ $(deriveJSON defaultOptions 'Movie)
 
 getMovieId :: Movie -> Int -- should be created by default? Why 'movieId movie' doesn't work elsewhere?
 getMovieId movie = movieId movie
+
+emptyMovie :: Movie
+emptyMovie = Movie 1 "title" "genres" ["tag1", "tag2"]
