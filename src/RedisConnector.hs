@@ -22,7 +22,7 @@ saveMovies :: [Movie] -> IO ()
 saveMovies movies = do
   mapM_ (saveMovie) movies
 
-getMovie :: Int -> IO (Either Reply (Maybe C.ByteString)) -- NOT TESTED
+getMovie :: Int -> IO (Either Reply (Maybe C.ByteString))
 getMovie movieId = do
   conn <- liftIO $ connect defaultConnectInfo
   encodedMovie <- runRedis conn $ get (C.pack (show (movieId))) -- now convert C.ByteString -> Movie

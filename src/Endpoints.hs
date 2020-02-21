@@ -17,30 +17,36 @@ import MoviesImporter
 import Model
 import RedisConnector
 
-import Database.Redis
+import qualified Data.ByteString.Char8      as  C
+
 
 --type MoviesAPI = "import" :> Get '[JSON] [Movie]
 type MoviesAPI = "import" :> Get '[PlainText] String
+               :<|> "movie" :> Get '[PlainText] String
 
-proxy :: Proxy MoviesAPI
-proxy = Proxy
+importProxy :: Proxy MoviesAPI
+importProxy = Proxy
 
-server :: Server MoviesAPI
-server = do
-  movies <- liftIO $ importMovies
-  liftIO $ saveMovies movies
-  return "Import in progress"
+importServer :: Server MoviesAPI
+importServer = importServer
+           :<|> singleMovieServer
+  where  importServer = do
+                          movies <- liftIO $ importMovies
+                          liftIO $ saveMovies movies
+                          return "Import in progress\n"
+
+         singleMovieServer = do
+                          encodedMovie <- liftIO $ getMovie 51094
+                          liftIO $ print encodedMovie
+                          return "lol\n"
+
+
 
 
 app :: Application
-app = serve proxy server
+app = serve importProxy importServer
 
 
--- Single Movie fetching endpoint
-type SingleMovieAPI = "movie" :> Capture "id" String :> Get '[JSON] Movie
-
-singleMovieApi :: Proxy SingleMovieAPI
-singleMovieApi = Proxy
 
 
 -- Multiple Movies fetching endpoint
@@ -52,9 +58,7 @@ startEndpoints = run 8080 app
 
 -- for metrics : https://hackage.haskell.org/package/prometheus-metrics-ghc
 
-
 --                 .route(GET(URL_PREFIX + "/movie/{movieId}"), handler::getMovie)
    --                .andRoute(GET(URL_PREFIX + "/movies"), handler::getMovies)
    --                .andRoute(GET(URL_PREFIX + "/cache/refresh"), handler::refreshCache)
    --                .andRoute(GET("/readiness"), handler::isCacheReady);
-

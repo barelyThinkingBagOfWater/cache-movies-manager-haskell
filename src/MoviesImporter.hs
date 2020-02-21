@@ -10,9 +10,6 @@ import Servant.Client
 import Servant
 import Model
 
-import qualified Servant.Client.Streaming as S
-
-
 type MoviesManagerAPI = "movies-manager" :> "movies" :> Get '[JSON] [Movie]
 
 moviesManagerAPI :: Proxy MoviesManagerAPI
