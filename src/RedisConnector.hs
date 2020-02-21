@@ -5,8 +5,7 @@ module RedisConnector (saveMovies, getMovie) where
 import Control.Monad.IO.Class (liftIO)
 import Data.Aeson (encode, decode)
 
-import qualified Data.Text                  as  T --remove me?
-import qualified Data.ByteString.Char8      as  C
+import qualified Data.ByteString.Char8      as  C (pack)
 import           Data.ByteString.Lazy       (toStrict, fromStrict)
 
 import Data.Typeable

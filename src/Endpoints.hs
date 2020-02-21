@@ -17,12 +17,8 @@ import MoviesImporter
 import Model
 import RedisConnector
 
-import qualified Data.ByteString.Char8      as  C
-
-
---type MoviesAPI = "import" :> Get '[JSON] [Movie]
 type MoviesAPI = "import" :> Get '[PlainText] String
-               :<|> "movie" :> Get '[PlainText] String
+               :<|> "movie" :> Capture "movieId" Int :> Get '[JSON] Movie
 
 importProxy :: Proxy MoviesAPI
 importProxy = Proxy
@@ -35,10 +31,9 @@ importServer = importServer
                           liftIO $ saveMovies movies
                           return "Import in progress\n"
 
-         singleMovieServer = do
-                          encodedMovie <- liftIO $ getMovie 51094
-                          liftIO $ print encodedMovie
-                          return "lol\n"
+         singleMovieServer movieId = do
+                          encodedMovie <- liftIO $ getMovie movieId
+                          return encodedMovie
 
 
 app :: Application
