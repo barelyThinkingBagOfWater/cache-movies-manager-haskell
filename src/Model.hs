@@ -10,7 +10,7 @@ data Movie = Movie
   , title :: String
   , genres :: String
   , tags :: [String]
-  } deriving (Show) -- for printing
+  } deriving (Show, Eq) -- for printing
 
 $(deriveJSON defaultOptions 'Movie)
 
@@ -18,4 +18,4 @@ getMovieId :: Movie -> Int -- should be created by default? Why 'movieId movie' 
 getMovieId movie = movieId movie
 
 emptyMovie :: Movie
-emptyMovie = Movie 1 "title" "genres" ["tag1", "tag2"]
+emptyMovie = Movie 0 "noTitle" "noGenre" [] --kind of null object pattern

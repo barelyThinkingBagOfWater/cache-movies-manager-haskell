@@ -1,6 +1,8 @@
 {-# LANGUAGE DataKinds       #-} -- for [Json] and the String like the url
 {-# LANGUAGE TemplateHaskell #-} -- for the deriveJson method
 {-# LANGUAGE TypeOperators   #-} -- for the :>
+{-# LANGUAGE FlexibleContexts #-} -- for the 404
+{-# LANGUAGE OverloadedStrings #-} -- for the error message in the 404
 
 module Endpoints
     ( startEndpoints
@@ -32,8 +34,11 @@ importServer = importServer
                           return "Import in progress\n"
 
          singleMovieServer movieId = do
-                          encodedMovie <- liftIO $ getMovie movieId
-                          return encodedMovie
+                          movie <- liftIO $ getMovie movieId
+                          if movie == emptyMovie -- I didn't want to use exceptions to drive the code, return Maybe from connector I guess
+                            then throwError $ err404 { errBody = "No movie found with this id in the cache" }
+                            else return movie
+
 
 
 app :: Application

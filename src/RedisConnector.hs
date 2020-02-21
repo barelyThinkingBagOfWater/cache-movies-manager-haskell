@@ -19,6 +19,7 @@ saveMovie movie = do
   conn <- liftIO $ connect defaultConnectInfo --you could try to add more max concurrent connections, check object ConnectInfo
   runRedis conn $ set (C.pack (show (getMovieId movie))) $ (toStrict $ encode movie) --show for Int -> String, C.pack for String -> C.ByteString
 
+
 saveMovies :: [Movie] -> IO ()
 saveMovies movies = do
   mapM_ (saveMovie) movies
@@ -44,7 +45,6 @@ getMovie movieId = do
               return emptyMovie
             Just movie -> do
               return movie
-
 
 -- connection lost est pas du à la limite des 100k avec redis? If you consume a stream one by one
 -- that should go better with Redis as well
