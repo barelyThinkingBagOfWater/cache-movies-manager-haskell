@@ -24,7 +24,7 @@ saveMovies :: [Movie] -> IO ()
 saveMovies movies = do
   mapM_ (saveMovie) movies
 
---getMovie :: Int -> IO (Either Reply (Maybe C.ByteString))
+
 getMovie :: Int -> IO Movie
 getMovie movieId = do
   conn <- liftIO $ connect defaultConnectInfo
@@ -39,8 +39,12 @@ getMovie movieId = do
           print $ "movie id:" ++ (show movieId) ++ " not found"
           return emptyMovie
         Just encodedMovie -> do
-          print $ (decode $ fromStrict encodedMovie :: Maybe Movie)
-          return emptyMovie
+          case (decode $ fromStrict encodedMovie :: Maybe Movie) of
+            Nothing -> do
+              print $ "Movie couldn't be decoded"
+              return emptyMovie
+            Just movie -> do
+              return movie
 
 
 -- connection lost est pas du à la limite des 100k avec redis? If you consume a stream one by one
