@@ -1,5 +1,3 @@
-{-# LANGUAGE OverloadedStrings #-} -- for the command sent to the server, required?
-
 module RedisConnector (saveMovies, getMovie) where
 
 import Control.Monad.IO.Class (liftIO)
@@ -7,8 +5,6 @@ import Data.Aeson (encode, decode)
 
 import qualified Data.ByteString.Char8      as  C (pack)
 import           Data.ByteString.Lazy       (toStrict, fromStrict)
-
-import Data.Typeable
 
 import Database.Redis (runRedis, connect, defaultConnectInfo, set, get, Status, Reply)
 import Model
@@ -28,20 +24,20 @@ saveMovies movies = do
 getMovie :: Int -> IO Movie
 getMovie movieId = do
   conn <- liftIO $ connect defaultConnectInfo
-  answer <- runRedis conn $ get (C.pack (show (movieId))) -- now convert C.ByteString -> Movie
+  answer <- runRedis conn $ get (C.pack (show (movieId)))
   case answer of
     Left reply -> do
-      putStrLn $ "Error: " ++ show reply
+      putStrLn $ "There was a problem with Redis when fetching the movie: " ++ show reply
       return emptyMovie
     Right maybe -> do
       case maybe of
         Nothing -> do
-          print $ "movie id:" ++ (show movieId) ++ " not found"
+          print $ "movie id:" ++ (show movieId) ++ " not found in cache"
           return emptyMovie
         Just encodedMovie -> do
           case (decode $ fromStrict encodedMovie :: Maybe Movie) of
             Nothing -> do
-              print $ "Movie couldn't be decoded"
+              print $ "Movie couldn't be decoded from Json stored in cache"
               return emptyMovie
             Just movie -> do
               return movie
