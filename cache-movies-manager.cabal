@@ -19,6 +19,7 @@ library
                      , MoviesImporter
                      , Model
                      , RedisConnector
+                     , TagsListener
   build-depends:       base >= 4.7 && < 5
                      , aeson
                      , servant-server
@@ -29,7 +30,9 @@ library
                      , http-client
                      , hedis
                      , bytestring
-                     , json-stream
+                     , prometheus-metrics-ghc
+                     , prometheus-client
+                     , amqp
   default-language:    Haskell2010
 
 executable cache-movies-manager-exe

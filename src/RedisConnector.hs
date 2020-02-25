@@ -27,7 +27,7 @@ getMovie movieId = do
   answer <- runRedis conn $ get (C.pack (show (movieId)))
   case answer of
     Left reply -> do
-      putStrLn $ "There was a problem with Redis when fetching the movie: " ++ show reply
+      print $ "There was a problem with Redis when fetching the movie: " ++ show reply
       return emptyMovie
     Right maybe -> do
       case maybe of
@@ -46,6 +46,7 @@ getMovies :: [Int] -> IO [Movie]
 getMovies movieIds = do
   mapM getMovie movieIds
 
+-- TODO: to add a tag you'll need to use a temp state, it's gonna take some time
 
 -- connection lost est pas du à la limite des 100k avec redis? If you consume a stream one by one
 -- that should go better with Redis as well

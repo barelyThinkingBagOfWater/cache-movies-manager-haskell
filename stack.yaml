@@ -41,6 +41,7 @@ packages:
 #
 extra-deps:
 - json-stream-0.4.2.4@sha256:8b7f17d54a6e1e6311756270f8bcf51e91bab4300945400de66118470dcf51b9,4716
+- prometheus-metrics-ghc-1.0.1@sha256:d12cd520cbedff91bd193e0192056474723e953e69cdf817fb79494d110df390,1231
 
 
 # Override default flag values for local packages and extra-deps

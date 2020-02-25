@@ -1,7 +1,10 @@
+{-# LANGUAGE TypeOperators   #-} -- for the :>
+
 module Main where
 
 import Endpoints
-import MoviesImporter
+import TagsListener
 
 main :: IO ()
-main = startEndpoints
+--main = startEndpoints
+main = testAmqp

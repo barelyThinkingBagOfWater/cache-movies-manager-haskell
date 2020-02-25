@@ -38,15 +38,13 @@ importServer = importServer
 
          singleMovieServer movieId = do
                           movie <- liftIO $ getMovie movieId
-                          if movie == emptyMovie -- I didn't want to use exceptions to drive the code, return Maybe from connector I guess
+                          if movie == emptyMovie -- I didn't want to use exceptions to drive the code, return Maybe or Either from connector instead
                             then throwError $ err404 { errBody = "No movie found with this id in the cache" }
                             else return movie
 
          multipleMoviesServer movieIds = do
                           movies <- liftIO $ getMovies movieIds
                           return movies
-
-
 
 
 app :: Application
@@ -56,7 +54,7 @@ startEndpoints :: IO ()
 startEndpoints = run 8080 app
 
 
--- for metrics : https://hackage.haskell.org/package/prometheus-metrics-ghc
+-- for metrics : https://github.com/fimad/prometheus-haskell/tree/master/example
 
 --                 .route(GET(URL_PREFIX + "/movie/{movieId}"), handler::getMovie)
    --                .andRoute(GET(URL_PREFIX + "/movies"), handler::getMovies)
