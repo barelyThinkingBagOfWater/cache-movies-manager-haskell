@@ -7,8 +7,7 @@ import Network.AMQP
 import           Control.Monad (forM_)
 import qualified Data.ByteString.Lazy.Char8 as BL
 import           Data.Monoid ((<>))
-import qualified Data.Text as DT
-import qualified Data.Text.Encoding as DT
+
 
 tagsExchangeName = "tags.added.exchange"
 tagsQueueName = "tags.added.queue.cache-movies-manager"
@@ -38,3 +37,5 @@ deliveryHandler (msg, metadata) = do
   ackEnv metadata
   where
     body = msgBody msg
+
+

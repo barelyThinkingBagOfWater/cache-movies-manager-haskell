@@ -23,11 +23,11 @@ type MoviesAPI = "cache" :> "refresh" :> Get '[PlainText] String --should be Put
                :<|> "movie" :> Capture "movieId" Int :> Get '[JSON] Movie
                :<|> "movies" :> QueryParams "id" Int :> Get '[JSON] [Movie]
 
-importProxy :: Proxy MoviesAPI
-importProxy = Proxy
+movieProxy :: Proxy MoviesAPI
+movieProxy = Proxy
 
-importServer :: Server MoviesAPI
-importServer = importServer
+movieServer :: Server MoviesAPI
+movieServer = importServer
            :<|> singleMovieServer
            :<|> multipleMoviesServer
 
@@ -48,7 +48,7 @@ importServer = importServer
 
 
 app :: Application
-app = serve importProxy importServer
+app = serve movieProxy movieServer
 
 startEndpoints :: IO ()
 startEndpoints = run 8080 app

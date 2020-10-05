@@ -46,6 +46,12 @@ getMovies :: [Int] -> IO [Movie]
 getMovies movieIds = do
   mapM getMovie movieIds
 
+
+--addTagToMovie :: String -> String -> IO ()
+--addTagToMovie tag movieId = do
+--  movie <- getMovie movieId
+
+
 -- TODO: to add a tag you'll need to use a temp state, it's gonna take some time
 
 -- connection lost est pas du à la limite des 100k avec redis? If you consume a stream one by one

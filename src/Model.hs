@@ -19,3 +19,7 @@ getMovieId movie = movieId movie
 
 emptyMovie :: Movie
 emptyMovie = Movie 0 "noTitle" "noGenre" [] --kind of null object pattern
+
+-- Get accessor for each field, or use different constructor, or?
+--addTag :: String -> Movie
+--addTag tag = do
